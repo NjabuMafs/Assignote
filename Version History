@@ -3,7 +3,6 @@
 Ver 1.0
 -Add and save upcoming assignments/tests
 -Data saving using JSON
--Notifier using toast
 -Notifier displaying upcoming assignments/tests using TXT
 
 Ver 1.1
