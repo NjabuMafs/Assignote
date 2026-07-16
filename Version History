@@ -1,0 +1,24 @@
+(Version Major.Minor.Patch)
+
+Ver 1.0
+-Add and save upcoming assignments/tests
+-Data saving using JSON
+-Notifier using toast
+-Notifier displaying upcoming assignments/tests using TXT
+
+Ver 1.1
+-Wipe Data feature
+
+Ver 1.2
+-Data Controls feature (which includes Wipe Data, and View and Delete modules)
+-View and delete individual modules
+
+Ver 1.2.1
+-Condition proofing View and Delete modules feature
+-No modules found message changed
+
+Ver 1.2.2
+-Manager renamed to Noter
+
+Ver 1.3
+-Added sorting algorithm to sort assignments and tests from most urgent (upcoming) to least urgent
