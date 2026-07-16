@@ -8,7 +8,7 @@ if getattr(sys, 'frozen', False):
 else:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-file_path = os.path.join(BASE_DIR, "module_data.json")
+file_path = os.path.join(BASE_DIR, "Task_data.json")
 
 #Save module data function (stores created data into the file)
 def save_data(module_name, module_month):

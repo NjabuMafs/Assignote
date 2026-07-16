@@ -35,10 +35,10 @@ else:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 #JSON file path
-file_path = os.path.join(BASE_DIR, 'module_data.json')
+file_path = os.path.join(BASE_DIR, 'Task_data.json')
 
 #Notification building
-text_file_path = os.path.join(BASE_DIR, 'modules.txt')
+text_file_path = os.path.join(BASE_DIR, 'Tasks.txt')
 absolute_text_path = os.path.abspath(text_file_path)
 
 #Load module data
@@ -51,7 +51,7 @@ try:
 
         if not modules:
             with open(absolute_text_path, 'w') as TXT_file:
-                TXT_file.write('No module data found. Use Noter to save your upcoming assignment and test data.')
+                TXT_file.write('No task data found. Use Noter to save your upcoming assignment and test data.')
 
                 #Make sure information is written before displaying file
                 TXT_file.flush()
@@ -73,7 +73,7 @@ except (FileNotFoundError, json.JSONDecodeError):
     sys.exit()
 
 #Parse module data and build notification string
-notification_string = 'Upcoming modules and tests:\n\n'
+notification_string = 'Upcoming tasks:\n\n'
 
 #For every dictionary in the list
 for module in modules:
