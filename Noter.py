@@ -10,72 +10,113 @@ else:
 
 file_path = os.path.join(BASE_DIR, "Task_data.json")
 
-#Save module data function (stores created data into the file)
-def save_data(module_name, module_month):
-    assignment = {'Name': module_name,
-                  'Due date': f'{module_month}'}
+#Month assigning function
+def assign_month(month):
+    months = {'january': 1,
+              'february': 2,
+              'march': 3,
+              'april': 4,
+              'may': 5,
+              'june': 6,
+              'july': 7,
+              'august': 8,
+              'september': 9,
+              'october': 10,
+              'november': 11,
+              'december': 12}
+
+    month_number = 0
+
+    for name, number in months.items():
+
+        #Conditions for whether month name is correct (full or abbreviated)
+        if (month.lower().strip() == name) or (month.lower().strip() == name[:3]):
+            month_number = number
+            break
+
+    if month_number == 0:
+        return month_number
+
+    else:
+        return month_number
+
+#Save task data function (stores created data into the file)
+def save_data(task_name, task_date):
+    task = {'Name': task_name,
+                  'Due date': f'{task_date}'}
 
     #Load existing assignment data
     try:
         with open(file_path, 'r') as file:
-            module_data = json.load(file)
+            task_data = json.load(file)
 
     except (FileNotFoundError, json.JSONDecodeError):
-        module_data = []
+        task_data = []
 
-    module_data.append(assignment)
+    task_data.append(task)
 
     with open(file_path, 'w') as file:
-        json.dump(module_data, file, indent=4)
+        json.dump(task_data, file, indent=4)
 
 #Add data function (creates data to be stored in the file)
 def add_data():
-    print('\nEnter assignment/test details (Enter \'x\' at any point to cancel)\n')
+    print('\nEnter task details (Enter \'x\' at any point to cancel)\n')
 
-    assignment_name = input('Enter assignment/test name: ')
+    task_name = input('Enter task name: ')
 
-    if assignment_name.lower().strip() == 'x':
+    if task_name.lower().strip() == 'x':
         print()
         return
 
     print('Enter due date')
-    assignment_day = input('Enter day: ')
+    task_day = input('Enter day: ')
 
-    if assignment_day.lower().strip() == 'x':
+    if task_day.lower().strip() in ('x', ''):
         print()
         return
 
-    assignment_month = input('Enter month in numbers: ')
+    task_month_input = input('Enter month (full word or 3 letter abbreviation): ')
 
-    if assignment_month.lower().strip() == 'x':
+    if task_month_input.lower().strip() in ('x', ''):
         print()
         return
 
+    else:
+        #If month is entered as an integer
+        if task_month_input.isdigit():
+            task_month = task_month_input
+
+        #If month is entered as a string
+        else:
+            task_month = assign_month(task_month_input)
+
+            if task_month == 0:
+                print('That is not a valid month')
+                return
+
+    #Current date initialising
     today = date.today()
     year = today.year
 
-    #Conditions for checking whether input data contains digits only
-    if not assignment_day.isdigit():
-        print(f'\n{assignment_day} is not a valid day\n')
-
-    elif not assignment_month.isdigit():
-        print(f'\n{assignment_month}is not a valid month\n')
+    #Condition for checking whether input data contains digits only
+    if not task_day.isdigit():
+        print(f'\n{task_day} is not a valid day\n')
 
     else:
-        assignment_day = int(assignment_day)
-        assignment_month = int(assignment_month)
+        task_day = int(task_day)
+        task_month = int(task_month)
 
         #Day mustn't be bigger than 31
-        if assignment_day > 31:
+        if task_day > 31:
             print('\nThe day of the due date is out of bounds\n')
 
         #Month mustn't be bigger than 12
-        elif assignment_month > 12:
+        elif task_month > 12:
             print('\nThe month of the due date is out of bounds\n')
 
         else:
             try:
-                due_date = date(year, assignment_month, assignment_day)
+                due_date = date(year, task_month, task_day)
 
             except ValueError:
                 print(f'\nThis is not a valid date (impossible)\n')
@@ -84,87 +125,101 @@ def add_data():
                 days_left = (due_date - today).days
 
                 if days_left == 0:
-                    print('\nModule is due today\n')
+                    print('\nTask is due today\n')
+                    return
 
                 elif days_left < 0:
-                    print('\nModule is overdue\n')
+                    print('\nTask is overdue')
+                    new_date = input('Would you like to schedule it for the next year? (y/n): ')
 
-                else:
-                    save_data(assignment_name, due_date)
-                    print('\nModule data has been saved successfully :)\n')
+                    if new_date.lower().strip() == 'y':
+                        year += 1
+
+                        due_date = date(year, task_month, task_day)
+
+                    elif new_date.lower().strip() == 'n':
+                        print()
+                        return
+
+                    else:
+                        print('Invalid input')
+                        return
+
+                save_data(task_name, due_date)
+                print('\nTask data has been saved successfully :)\n')
 
 #View and delete data function
 def view_and_delete():
     try:
         with open(file_path, 'r') as file:
-            modules = json.load(file)
+            tasks = json.load(file)
 
-            if not modules:
-                print('\nModule data not found\n')
+            if not tasks:
+                print('\nTask data not found\n')
                 return
 
     except (FileNotFoundError, json.JSONDecodeError):
         print('There was a problem loading the json file')
         return
 
-    print('\nModules:\n')
+    print('\nTasks:\n')
 
     #For every dictionary in the list
-    for module in modules:
-        module_name = module.get('Name')
-        module_due_date = module.get('Due date')
+    for task in tasks:
+        task_name = task.get('Name')
+        task_due_date = task.get('Due date')
 
-        #If module name or module due date is missing (broken/missing data)
-        if not module_name or not module_due_date:
-            if not module_name:
-                print(f'\nDue date: {module_due_date} does not have a module assigned to it\n')
+        #If task name or task due date is missing (broken/missing data)
+        if not task_name or not task_due_date:
+            if not task_name:
+                print(f'\nDue date: {task_due_date} does not have a task assigned to it\n')
 
-            elif not module_due_date:
-                print(f'\nModule: {module_name} has a missing due date\n')
+            elif not task_due_date:
+                print(f'\nTask: {task_name} has a missing due date\n')
 
             continue
 
-        print(f'{module_name} due on {module_due_date}')
+        print(f'{task_name} due on {task_due_date}')
 
-    print('\n1. Delete a module'
+    print('\n1. Delete a task'
           '\n2. Back')
 
     data_option = input('\nSelect an option: ')
 
     if data_option.strip() == '1':
-        module_to_delete = input('\nEnter the name of the module: ')
+        task_to_delete = input('\nEnter the name of the task: ')
 
-        if not module_to_delete:
+        if not task_to_delete:
             print('\nInvalid input')
             view_and_delete()
 
         else:
-            module_exists = False
+            task_exists = False
 
-            for module in modules:
-                module_finder = module.get('Name')
+            for task in tasks:
+                task_finder = task.get('Name')
 
-                if module_finder.strip().lower() == module_to_delete.strip().lower():
-                    module_exists = True
+                if task_finder.strip().lower() == task_to_delete.strip().lower():
+                    task_exists = True
 
-            if module_exists:
-                new_module_data = []
+            if task_exists:
+                new_task_data = []
 
-                for module in modules:
-                    module_finder = module.get('Name')
+                for task in tasks:
+                    task_finder = task.get('Name')
 
-                    if module_finder.strip().lower() == module_to_delete.strip().lower():
+                    if task_finder.strip().lower() == task_to_delete.strip().lower():
                         continue
 
-                    new_module_data.append(module)
+                    new_task_data.append(task)
 
                 with open(file_path, 'w') as file:
-                    json.dump(new_module_data, file, indent=4)
+                    json.dump(new_task_data, file, indent=4)
 
-                print('\nModule Successfully deleted')
+                print('\nTask Successfully deleted')
 
             else:
-                print('\nModule not found')
+                print('\nTask not found')
 
     elif data_option.strip() == '2':
         pass
@@ -204,7 +259,7 @@ def wipe_data():
 #Data controls function
 def data_controls():
     print('\n====Data Controls====\n\n'
-          '1. View and Delete module\n'
+          '1. View and Delete task\n'
           '2. Wipe Data\n'
           '3. Back\n')
 
@@ -224,7 +279,7 @@ def data_controls():
 
 while True:
     print('====Assignote====\n\n'
-          '1. Log a module\n'
+          '1. Log a task\n'
           '2. Data Controls\n'
           '3. Close Program')
 

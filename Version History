@@ -21,3 +21,9 @@ Ver 1.2.2
 
 Ver 1.3
 -Added sorting algorithm to sort assignments and tests from most urgent (upcoming) to least urgent
+
+Ver 1.4
+-'Modules/tests' renamed to simply 'tasks'
+-Feature to log due date months as the full name or three letter abbreviation,
+    instead of just the number added for simplicity and dynamic handling
+-Feature to schedule task to the next year if it's overdue added
