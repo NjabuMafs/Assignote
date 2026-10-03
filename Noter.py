@@ -186,6 +186,7 @@ def view_and_delete():
 
     data_option = input('\nSelect an option: ')
 
+    #Delete task
     if data_option.strip() == '1':
         task_to_delete = input('\nEnter the name of the task: ')
 
@@ -194,31 +195,24 @@ def view_and_delete():
             view_and_delete()
 
         else:
-            task_exists = False
+            task_found = False
 
-            for task in tasks:
+            for index, task in enumerate(tasks):
                 task_finder = task.get('Name')
 
                 if task_finder.strip().lower() == task_to_delete.strip().lower():
-                    task_exists = True
+                    index_of_task = index
+                    tasks.pop(index_of_task)
+                    task_found = True
+                    
+                    break
 
-            if task_exists:
-                new_task_data = []
+            with open(file_path, 'w') as file:
+                json.dump(tasks, file, indent=4)
 
-                for task in tasks:
-                    task_finder = task.get('Name')
+            print('\nTask Successfully deleted')
 
-                    if task_finder.strip().lower() == task_to_delete.strip().lower():
-                        continue
-
-                    new_task_data.append(task)
-
-                with open(file_path, 'w') as file:
-                    json.dump(new_task_data, file, indent=4)
-
-                print('\nTask Successfully deleted')
-
-            else:
+            if not task_found:
                 print('\nTask not found')
 
     elif data_option.strip() == '2':
